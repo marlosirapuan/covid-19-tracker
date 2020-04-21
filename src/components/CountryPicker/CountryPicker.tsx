@@ -15,17 +15,15 @@ interface Props {
 }
 
 const CountryPicker = ({ handleCountryChange }: Props): JSX.Element => {
-  const [fetchedCountries, setFetchedCountries] = useState<CountryData[]>([
-    { name: '' }
-  ])
+  const [fetchedCountries, setFetchedCountries] = useState<CountryData[]>([{ name: '' }])
 
   useEffect(() => {
-    const fetchAPI = async () => setFetchedCountries(await countries() as CountryData[])
+    const fetchAPI = async () => setFetchedCountries((await countries()) as CountryData[])
     fetchAPI()
   }, [setFetchedCountries])
 
   if (!fetchedCountries.length) {
-    return (<div>Loading...</div>)
+    return <div>Loading...</div>
   }
 
   return (
@@ -35,7 +33,11 @@ const CountryPicker = ({ handleCountryChange }: Props): JSX.Element => {
         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleCountryChange(e.target.value)}
       >
         <option value="">Global</option>
-        {fetchedCountries.map((country, i) => <option key={i} value={country.name}>{country.name}</option>)}
+        {fetchedCountries.map((country, i) => (
+          <option key={i} value={country.name}>
+            {country.name}
+          </option>
+        ))}
       </NativeSelect>
     </FormControl>
   )

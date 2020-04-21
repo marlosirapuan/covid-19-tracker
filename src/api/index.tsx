@@ -5,9 +5,9 @@ const URL_DAILY = `${URL}/daily`
 const URL_COUNTRIES = `${URL}/countries`
 
 interface ResponseData {
-  confirmed: number,
-  recovered: number,
-  deaths: number,
+  confirmed: number
+  recovered: number
+  deaths: number
   lastUpdate: Date
 }
 
@@ -18,7 +18,9 @@ export const fetchData = async (country: string = '') => {
   }
 
   try {
-    const { data: { confirmed, recovered, deaths, lastUpdate } } = await axios.get(changeableUrl)
+    const {
+      data: { confirmed, recovered, deaths, lastUpdate }
+    } = await axios.get(changeableUrl)
     const response: ResponseData = {
       confirmed: confirmed.value,
       recovered: recovered.value,
@@ -35,13 +37,13 @@ export const fetchData = async (country: string = '') => {
 interface ResponseDailyData {
   confirmed: {
     total: number
-  },
+  }
   recovered: {
     total: number
-  },
+  }
   deaths: {
     total: number
-  },
+  }
   reportDate: string
 }
 
@@ -66,7 +68,9 @@ interface ResponseCountryData {
 
 export const countries = async () => {
   try {
-    const { data: { countries } } = await axios.get(URL_COUNTRIES)
+    const {
+      data: { countries }
+    } = await axios.get(URL_COUNTRIES)
     const response: ResponseCountryData[] = []
 
     countries.map(({ name }: ResponseCountryData) => {

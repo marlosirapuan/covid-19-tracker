@@ -7,24 +7,26 @@ import styles from './Cards.module.css'
 
 interface CardsProps {
   data: {
-    confirmed?: number,
-    recovered?: number,
-    deaths?: number,
-    lastUpdate?: Date,
+    confirmed?: number
+    recovered?: number
+    deaths?: number
+    lastUpdate?: Date
     country?: string
   }
 }
 
 const formatDate = (date?: Date): string => {
-  if (!date) { return '' }
+  if (!date) {
+    return ''
+  }
 
   return new Date(date).toDateString()
 }
 
 interface CardItemProps {
-  title: string,
-  type: string,
-  value: number,
+  title: string
+  type: string
+  value: number
   date?: Date
 }
 
@@ -45,9 +47,11 @@ const CardFor = ({ title, type, value, date }: CardItemProps): JSX.Element => {
   return (
     <Grid item component={Card} xs={12} md={3} className={cx(styled(type))}>
       <CardContent>
-        <Typography color="textSecondary" gutterBottom>{title}</Typography>
+        <Typography color="textSecondary" gutterBottom>
+          {title}
+        </Typography>
         <Typography variant="h5">
-          <CountUp start={0} end={value} duration={2.5} separator=',' ></CountUp>
+          <CountUp start={0} end={value} duration={2.5} separator=","></CountUp>
         </Typography>
         <Typography color="textSecondary">{formatedDate}</Typography>
         <Typography variant="body2">Number of active cases of COVID-19</Typography>
@@ -56,11 +60,9 @@ const CardFor = ({ title, type, value, date }: CardItemProps): JSX.Element => {
   )
 }
 
-const Cards = ({
-  data: { confirmed = 0, recovered = 0, deaths = 0, lastUpdate, country }
-}: CardsProps) => {
+const Cards = ({ data: { confirmed = 0, recovered = 0, deaths = 0, lastUpdate } }: CardsProps) => {
   if (!confirmed) {
-    return (<div>Loading...</div>)
+    return <div>Loading...</div>
   }
 
   return (
