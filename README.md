@@ -1,5 +1,7 @@
 # COVID-19 Tracker with ReactJS (TypeScript, Hooks, MaterialUI, Chartjs, ESLint Standard)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/956a3fba-c554-460c-a432-d1be99cd4c09/deploy-status)](https://app.netlify.com/sites/covid-19-tracker-ts/deploys)
+
 [https://covid-19-tracker-ts.netlify.app](https://covid-19-tracker-ts.netlify.app/)
 
 ![COVID-19](./preview.png)
