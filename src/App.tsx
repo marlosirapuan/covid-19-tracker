@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styles from './App.module.css'
 import { fetchData } from './api'
 
@@ -22,10 +22,10 @@ const App: React.FC = () => {
     fetchAPI()
   }, [])
 
-  const onHandleCountryChange = async (country: string) => {
+  const onHandleCountryChange = useCallback(async (country: string) => {
     const fetchedData = (await fetchData(country)) as CardData
     setData({ ...fetchedData, country: country })
-  }
+  }, [])
 
   return (
     <div className={styles.container}>
