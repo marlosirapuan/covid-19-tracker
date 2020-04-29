@@ -2,29 +2,24 @@ import React, { useState, useEffect, useCallback } from 'react'
 import styles from './App.module.css'
 import { fetchData } from './api'
 
+import { ResponseData } from './api/types'
 import { Cards, CountryPicker, Chart } from './components'
 
 import image from './images/image.png'
 
-interface CardData {
-  confirmed?: number
-  recovered?: number
-  deaths?: number
-  lastUpdate?: Date
-  country?: string
-}
-
 const App: React.FC = () => {
-  const [data, setData] = useState<CardData>({})
+  const [data, setData] = useState<ResponseData>({} as ResponseData)
 
   useEffect(() => {
-    const fetchAPI = async () => setData((await fetchData()) as CardData)
-    fetchAPI()
+    ;(async function fetchAPI(): Promise<void> {
+      const response = (await fetchData()) as ResponseData
+      setData(response)
+    })()
   }, [])
 
-  const onHandleCountryChange = useCallback(async (country: string) => {
-    const fetchedData = (await fetchData(country)) as CardData
-    setData({ ...fetchedData, country: country })
+  const onHandleCountryChange = useCallback(async (selectedCountry: string) => {
+    const response = await fetchData(selectedCountry)
+    setData({ ...response, country: selectedCountry })
   }, [])
 
   return (

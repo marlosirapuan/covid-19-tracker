@@ -1,56 +1,36 @@
 import React, { useState, useEffect } from 'react'
+import { CircularProgress } from '@material-ui/core'
 import { Line, Bar } from 'react-chartjs-2'
 
 import styles from './Chart.module.css'
 
 import { fetchDailyData } from '../../api'
+import { ResponseData, ResponseDailyData } from '../../api/types'
 
-interface ChartProps {
-  data: {
-    confirmed?: number
-    recovered?: number
-    deaths?: number
-    lastUpdate?: Date
-    country?: string
-  }
+interface Props {
+  data: ResponseData
 }
 
-interface ChartData {
-  confirmed: {
-    total: number
-  }
-  deaths: {
-    total: number
-  }
-  reportDate: string
-  country?: string
-}
-
-const Chart = ({ data: { confirmed, recovered, deaths, country } }: ChartProps) => {
-  const [dailyData, setDailyData] = useState<ChartData[]>([
-    {
-      confirmed: {
-        total: 0
-      },
-      deaths: {
-        total: 0
-      },
-      reportDate: ''
-    }
-  ])
+const Chart: React.FC<Props> = ({
+  data: { confirmed, recovered, deaths, country }
+}) => {
+  const [dailyData, setDailyData] = useState<ResponseDailyData[]>([])
 
   useEffect(() => {
-    const fetchAPI = async () => setDailyData((await fetchDailyData()) as ChartData[])
-    fetchAPI()
+    ;(async function fetchAPI(): Promise<void> {
+      const response = (await fetchDailyData()) as ResponseDailyData[]
+      setDailyData(response)
+    })()
   }, [])
 
   if (!dailyData || !dailyData.length) {
-    return <div>Loading...</div>
+    return <CircularProgress />
   }
 
-  const labelsDates: string[] = dailyData.map((d: ChartData) => d.reportDate) || []
-  const labelsConfirmed: number[] = dailyData.map((d: ChartData) => d.confirmed.total) || []
-  const labelsDeaths: number[] = dailyData.map((d: ChartData) => d.deaths.total) || []
+  const labelsDates: string[] = dailyData.map((d) => d.reportDate) || []
+  const labelsConfirmed: number[] =
+    dailyData.map((d) => d.confirmed.total) || []
+  const labelsDeaths: number[] = dailyData.map((d) => d.deaths.total) || []
 
   const lineChart = dailyData.length ? (
     <Line
@@ -81,8 +61,12 @@ const Chart = ({ data: { confirmed, recovered, deaths, country } }: ChartProps) 
         datasets: [
           {
             label: 'People',
-            backgroundColor: ['rgba(0, 0, 255, .5)', 'rgba(0, 255, 0, .5)', 'rgba(255, 0, 0, .5)'],
-            data: [confirmed, recovered, deaths]
+            backgroundColor: [
+              'rgba(0, 0, 255, .5)',
+              'rgba(0, 255, 0, .5)',
+              'rgba(255, 0, 0, .5)'
+            ],
+            data: [confirmed.value, recovered.value, deaths.value]
           }
         ]
       }}
@@ -93,7 +77,9 @@ const Chart = ({ data: { confirmed, recovered, deaths, country } }: ChartProps) 
     />
   ) : null
 
-  return <div className={styles.container}>{country ? barChart : lineChart}</div>
+  return (
+    <div className={styles.container}>{country ? barChart : lineChart}</div>
+  )
 }
 
 export default Chart

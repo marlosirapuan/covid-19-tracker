@@ -1,39 +1,42 @@
 import React, { useState, useEffect } from 'react'
-import { NativeSelect, FormControl } from '@material-ui/core'
+import { NativeSelect, FormControl, CircularProgress } from '@material-ui/core'
 
-import { countries } from '../../api'
+import { fetchCountries } from '../../api'
+import { ResponseCountryData } from '../../api/types'
 
 import styles from './CountryPicker.module.css'
 
-interface CountryData {
-  name: string
-}
-
 interface Props {
   // with (value: React.ChangeEvent<HTMLSelectElement>) does not work : ((
-  handleCountryChange: (e: any) => void
+  handleCountryChange(e: any): void
 }
 
 const CountryPicker = ({ handleCountryChange }: Props): JSX.Element => {
-  const [fetchedCountries, setFetchedCountries] = useState<CountryData[]>([{ name: '' }])
+  const [fetchedCountries, setFetchedCountries] = useState<ResponseCountryData>(
+    {} as ResponseCountryData
+  )
 
   useEffect(() => {
-    const fetchAPI = async () => setFetchedCountries((await countries()) as CountryData[])
-    fetchAPI()
+    ;(async function fetchAPI(): Promise<void> {
+      const response = (await fetchCountries()) as ResponseCountryData
+      setFetchedCountries(response)
+    })()
   }, [setFetchedCountries])
 
-  if (!fetchedCountries.length) {
-    return <div>Loading...</div>
+  if (!fetchedCountries.countries) {
+    return <CircularProgress />
   }
 
   return (
     <FormControl className={styles.formControl}>
       <NativeSelect
         defaultValue=""
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleCountryChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          handleCountryChange(e.target.value)
+        }
       >
         <option value="">Global</option>
-        {fetchedCountries.map((country, i) => (
+        {fetchedCountries.countries.map((country, i) => (
           <option key={i} value={country.name}>
             {country.name}
           </option>

@@ -1,84 +1,40 @@
 import axios from 'axios'
 
+import { ResponseData, ResponseDailyData, ResponseCountryData } from './types'
+
 const URL = 'https://covid19.mathdro.id/api'
 const URL_DAILY = `${URL}/daily`
 const URL_COUNTRIES = `${URL}/countries`
 
-interface ResponseData {
-  confirmed: number
-  recovered: number
-  deaths: number
-  lastUpdate: Date
-}
-
-export const fetchData = async (country: string = '') => {
+export const fetchData = async (country?: string): Promise<ResponseData> => {
   let changeableUrl = URL as string
   if (country) {
     changeableUrl = `${URL}/countries/${country}`
   }
 
   try {
-    const {
-      data: { confirmed, recovered, deaths, lastUpdate }
-    } = await axios.get(changeableUrl)
-    const response: ResponseData = {
-      confirmed: confirmed.value,
-      recovered: recovered.value,
-      deaths: deaths.value,
-      lastUpdate
-    }
+    const { data } = await axios.get<ResponseData>(changeableUrl)
 
-    return response
+    return data
   } catch (error) {
-    console.log(error)
+    return {} as ResponseData
   }
 }
 
-interface ResponseDailyData {
-  confirmed: {
-    total: number
-  }
-  recovered: {
-    total: number
-  }
-  deaths: {
-    total: number
-  }
-  reportDate: string
-}
-
-export const fetchDailyData = async () => {
+export const fetchDailyData = async (): Promise<ResponseDailyData[]> => {
   try {
-    const { data } = await axios.get(URL_DAILY)
-    const response: ResponseDailyData[] = []
-
-    data.map(({ confirmed, recovered, deaths, reportDate }: ResponseDailyData) => {
-      return response.push({ confirmed, recovered, deaths, reportDate })
-    })
-
-    return response
+    const { data } = await axios.get<ResponseDailyData[]>(URL_DAILY)
+    return data
   } catch (error) {
-    console.log(error)
+    return []
   }
 }
 
-interface ResponseCountryData {
-  name: string
-}
-
-export const countries = async () => {
+export const fetchCountries = async (): Promise<ResponseCountryData> => {
   try {
-    const {
-      data: { countries }
-    } = await axios.get(URL_COUNTRIES)
-    const response: ResponseCountryData[] = []
-
-    countries.map(({ name }: ResponseCountryData) => {
-      return response.push({ name })
-    })
-
-    return response
+    const { data } = await axios.get<ResponseCountryData>(URL_COUNTRIES)
+    return data
   } catch (error) {
-    console.log(error)
+    return {} as ResponseCountryData
   }
 }

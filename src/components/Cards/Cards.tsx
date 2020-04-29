@@ -1,19 +1,18 @@
 import React from 'react'
-import { Card, CardContent, Typography, Grid } from '@material-ui/core'
+
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  CircularProgress
+} from '@material-ui/core'
 import CountUp from 'react-countup'
 import cx from 'classnames'
 
-import styles from './Cards.module.css'
+import { ResponseData } from '../../api/types'
 
-interface CardsProps {
-  data: {
-    confirmed?: number
-    recovered?: number
-    deaths?: number
-    lastUpdate?: Date
-    country?: string
-  }
-}
+import styles from './Cards.module.css'
 
 const formatDate = (date?: Date): string => {
   if (!date) {
@@ -23,7 +22,7 @@ const formatDate = (date?: Date): string => {
   return new Date(date).toDateString()
 }
 
-interface CardItemProps {
+interface ItemProps {
   title: string
   type: string
   value: number
@@ -41,7 +40,7 @@ const styled = (type: string): Array<string> => {
   }
 }
 
-const CardFor = ({ title, type, value, date }: CardItemProps): JSX.Element => {
+const CardFor = ({ title, type, value, date }: ItemProps): JSX.Element => {
   const formatedDate = formatDate(date || new Date())
 
   return (
@@ -54,23 +53,46 @@ const CardFor = ({ title, type, value, date }: CardItemProps): JSX.Element => {
           <CountUp start={0} end={value} duration={2.5} separator=","></CountUp>
         </Typography>
         <Typography color="textSecondary">{formatedDate}</Typography>
-        <Typography variant="body2">Number of active cases of COVID-19</Typography>
+        <Typography variant="body2">
+          Number of active cases of COVID-19
+        </Typography>
       </CardContent>
     </Grid>
   )
 }
 
-const Cards = ({ data: { confirmed = 0, recovered = 0, deaths = 0, lastUpdate } }: CardsProps) => {
+interface Props {
+  data: ResponseData
+}
+
+const Cards: React.FC<Props> = ({
+  data: { confirmed, recovered, deaths, lastUpdate }
+}) => {
   if (!confirmed) {
-    return <div>Loading...</div>
+    return <CircularProgress />
   }
 
   return (
     <div className={styles.container}>
       <Grid container spacing={3} justify="center">
-        <CardFor title="Infected" type="infected" value={confirmed} date={lastUpdate} />
-        <CardFor title="Recovered" type="recovered" value={recovered} date={lastUpdate} />
-        <CardFor title="Deaths" type="deaths" value={deaths} date={lastUpdate} />
+        <CardFor
+          title="Infected"
+          type="infected"
+          value={confirmed.value}
+          date={lastUpdate}
+        />
+        <CardFor
+          title="Recovered"
+          type="recovered"
+          value={recovered.value}
+          date={lastUpdate}
+        />
+        <CardFor
+          title="Deaths"
+          type="deaths"
+          value={deaths.value}
+          date={lastUpdate}
+        />
       </Grid>
     </div>
   )
